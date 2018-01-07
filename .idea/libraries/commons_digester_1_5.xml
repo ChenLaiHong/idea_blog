@@ -1,0 +1,21 @@
+<component name="libraryTable">
+  <library name="commons-digester-1.5">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/src/main/webapp/WEB-INF/lib/commons-digester-1.5.jar!/" />
+      <root url="jar://$PROJECT_DIR$/src/main/webapp/WEB-INF/lib/commons-fileupload-1.3.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/src/main/webapp/WEB-INF/lib/commons-httpclient-3.0-rc4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/src/main/webapp/WEB-INF/lib/commons-io-2.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/src/main/webapp/WEB-INF/lib/commons-jexl-2.0.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/src/main/webapp/WEB-INF/lib/dom4j-1.6.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/src/main/webapp/WEB-INF/lib/json-lib-2.4-jdk15.jar!/" />
+      <root url="jar://$PROJECT_DIR$/src/main/webapp/WEB-INF/lib/json.jar!/" />
+      <root url="jar://$PROJECT_DIR$/src/main/webapp/WEB-INF/lib/jxls-core-1.0.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/src/main/webapp/WEB-INF/lib/jxls-reader-1.0.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/src/main/webapp/WEB-INF/lib/mail.jar!/" />
+      <root url="jar://$PROJECT_DIR$/src/main/webapp/WEB-INF/lib/ssstool.jar!/" />
+      <root url="jar://$PROJECT_DIR$/src/main/webapp/WEB-INF/lib/ueditor-1.1.2.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

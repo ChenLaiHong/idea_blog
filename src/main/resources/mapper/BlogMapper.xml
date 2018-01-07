@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ch.dao.BlogMapper">
+    <resultMap id="BaseResultMap" type="com.ch.bean.Blog">
+        <id column="bid" jdbcType="INTEGER" property="bid" />
+        <result column="title" jdbcType="VARCHAR" property="title" />
+        <result column="summary" jdbcType="VARCHAR" property="summary" />
+        <result column="releaseDate" jdbcType="TIMESTAMP" property="releaseDate" />
+        <result column="author" jdbcType="VARCHAR" property="author" />
+        <result column="clickHit" jdbcType="INTEGER" property="clickHit" />
+        <result column="replyHit" jdbcType="INTEGER" property="replyHit" />
+        <result column="content" jdbcType="VARCHAR" property="content" />
+        <result column="keyWord" jdbcType="VARCHAR" property="keyWord" />
+        <result column="typeId" jdbcType="INTEGER" property="typeId" />
+    </resultMap>
+
+    <resultMap id="BlogResult" type="com.ch.bean.Blog">
+        <id column="bid" jdbcType="INTEGER" property="bid" />
+        <result column="title" jdbcType="VARCHAR" property="title" />
+        <result column="summary" jdbcType="VARCHAR" property="summary" />
+        <result column="releaseDate" jdbcType="TIMESTAMP" property="releaseDate" />
+        <result column="author" jdbcType="VARCHAR" property="author" />
+        <result column="clickHit" jdbcType="INTEGER" property="clickHit" />
+        <result column="replyHit" jdbcType="INTEGER" property="replyHit" />
+        <result column="content" jdbcType="VARCHAR" property="content" />
+        <result column="keyWord" jdbcType="VARCHAR" property="keyWord" />
+        <association property="type" column="typeId" select="com.ch.dao.TypeMapper.findById"></association>
+
+    </resultMap>
+    <!-- 插入 -->
+    <insert id="add" useGeneratedKeys="true" keyProperty="bid" parameterType="Blog">
+        insert into blog values(null,#{title},#{summary},now(),#{author},0,0,#{content},#{keyWord},#{type.typeId})
+    </insert>
+    <!-- 带类型查找 -->
+    <select id="getBlogByTypeId" parameterType="Integer" resultType="Integer">
+        select count(*) from blog where typeId=#{typeId}
+    </select>
+
+    <select id="list" parameterType="Map" resultMap="BlogResult">
+        select * from blog
+        <where>
+            <if test="title!=null and title!='' ">
+                and title like #{title}
+            </if>
+            <if test="typeId!=null and typeId!='' ">
+                and typeId = #{typeId}
+            </if>
+            <if test="releaseDateStr!=null and releaseDateStr!='' ">
+                and DATE_FORMAT(releaseDate,'%Y年%m月') = #{releaseDateStr}
+            </if>
+        </where>
+        order by releaseDate desc
+        <if test="start!=null and size!=null">
+            limit #{start},#{size}
+        </if>
+    </select>
+
+    <select id="getTotal" parameterType="Map" resultType="Long">
+        select count(*) from blog
+        <where>
+            <if test="title!=null and title!='' ">
+                and title like #{title}
+            </if>
+            <if test="typeId!=null and typeId!='' ">
+                and typeId = #{typeId}
+            </if>
+            <if test="releaseDateStr!=null and releaseDateStr!='' ">
+                and DATE_FORMAT(releaseDate,'%Y年%m月') = #{releaseDateStr}
+            </if>
+        </where>
+    </select>
+    <sql id="Example_Where_Clause">
+        <where>
+            <foreach collection="oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" prefixOverrides="and" suffix=")">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Update_By_Example_Where_Clause">
+        <where>
+            <foreach collection="example.oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" prefixOverrides="and" suffix=")">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Base_Column_List">
+        bid, title, summary, releaseDate, author, clickHit, replyHit, content, keyWord, typeId
+    </sql>
+    <select id="selectByExample" parameterType="com.ch.bean.BlogExample" resultMap="BaseResultMap">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        <include refid="Base_Column_List" />
+        from blog
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause" />
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BlogResult">
+        select
+        <include refid="Base_Column_List" />
+        from blog
+        where bid = #{bid,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete from blog
+        where bid = #{bid,jdbcType=INTEGER}
+    </delete>
+    <delete id="deleteByExample" parameterType="com.ch.bean.BlogExample">
+        delete from blog
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause" />
+        </if>
+    </delete>
+    <insert id="insert" parameterType="com.ch.bean.Blog">
+        insert into blog (bid, title, summary,
+        releaseDate, author, clickHit,
+        replyHit, content, keyWord,
+        typeId)
+        values (#{bid,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR}, #{summary,jdbcType=VARCHAR},
+        #{releaseDate,jdbcType=TIMESTAMP}, #{author,jdbcType=VARCHAR}, #{clickHit,jdbcType=INTEGER},
+        #{replyHit,jdbcType=INTEGER}, #{content,jdbcType=VARCHAR}, #{keyWord,jdbcType=VARCHAR},
+        #{typeId,jdbcType=INTEGER})
+    </insert>
+    <insert id="insertSelective" parameterType="com.ch.bean.Blog">
+        insert into blog
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="bid != null">
+                bid,
+            </if>
+            <if test="title != null">
+                title,
+            </if>
+            <if test="summary != null">
+                summary,
+            </if>
+            <if test="releaseDate != null">
+                releaseDate,
+            </if>
+            <if test="author != null">
+                author,
+            </if>
+            <if test="clickHit != null">
+                clickHit,
+            </if>
+            <if test="replyHit != null">
+                replyHit,
+            </if>
+            <if test="content != null">
+                content,
+            </if>
+            <if test="keyWord != null">
+                keyWord,
+            </if>
+            <if test="typeId != null">
+                typeId,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="bid != null">
+                #{bid,jdbcType=INTEGER},
+            </if>
+            <if test="title != null">
+                #{title,jdbcType=VARCHAR},
+            </if>
+            <if test="summary != null">
+                #{summary,jdbcType=VARCHAR},
+            </if>
+            <if test="releaseDate != null">
+                #{releaseDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="author != null">
+                #{author,jdbcType=VARCHAR},
+            </if>
+            <if test="clickHit != null">
+                #{clickHit,jdbcType=INTEGER},
+            </if>
+            <if test="replyHit != null">
+                #{replyHit,jdbcType=INTEGER},
+            </if>
+            <if test="content != null">
+                #{content,jdbcType=VARCHAR},
+            </if>
+            <if test="keyWord != null">
+                #{keyWord,jdbcType=VARCHAR},
+            </if>
+            <if test="typeId != null">
+                #{typeId,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+    <select id="countByExample" parameterType="com.ch.bean.BlogExample" resultType="java.lang.Long">
+        select count(*) from blog
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause" />
+        </if>
+    </select>
+    <update id="updateByExampleSelective" parameterType="map">
+        update blog
+        <set>
+            <if test="record.bid != null">
+                bid = #{record.bid,jdbcType=INTEGER},
+            </if>
+            <if test="record.title != null">
+                title = #{record.title,jdbcType=VARCHAR},
+            </if>
+            <if test="record.summary != null">
+                summary = #{record.summary,jdbcType=VARCHAR},
+            </if>
+            <if test="record.releaseDate != null">
+                releaseDate = #{record.releaseDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.author != null">
+                author = #{record.author,jdbcType=VARCHAR},
+            </if>
+            <if test="record.clickHit != null">
+                clickHit = #{record.clickHit,jdbcType=INTEGER},
+            </if>
+            <if test="record.replyHit != null">
+                replyHit = #{record.replyHit,jdbcType=INTEGER},
+            </if>
+            <if test="record.content != null">
+                content = #{record.content,jdbcType=VARCHAR},
+            </if>
+            <if test="record.keyWord != null">
+                keyWord = #{record.keyWord,jdbcType=VARCHAR},
+            </if>
+            <if test="record.typeId != null">
+                typeId = #{record.typeId,jdbcType=INTEGER},
+            </if>
+        </set>
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause" />
+        </if>
+    </update>
+    <update id="updateByExample" parameterType="map">
+        update blog
+        set bid = #{record.bid,jdbcType=INTEGER},
+        title = #{record.title,jdbcType=VARCHAR},
+        summary = #{record.summary,jdbcType=VARCHAR},
+        releaseDate = #{record.releaseDate,jdbcType=TIMESTAMP},
+        author = #{record.author,jdbcType=VARCHAR},
+        clickHit = #{record.clickHit,jdbcType=INTEGER},
+        replyHit = #{record.replyHit,jdbcType=INTEGER},
+        content = #{record.content,jdbcType=VARCHAR},
+        keyWord = #{record.keyWord,jdbcType=VARCHAR},
+        typeId = #{record.typeId,jdbcType=INTEGER}
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause" />
+        </if>
+    </update>
+    <update id="updateByPrimaryKeySelective" parameterType="com.ch.bean.Blog">
+        update blog
+        <set>
+            <if test="title != null">
+                title = #{title,jdbcType=VARCHAR},
+            </if>
+            <if test="summary != null">
+                summary = #{summary,jdbcType=VARCHAR},
+            </if>
+            <if test="releaseDate != null">
+                releaseDate = #{releaseDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="author != null">
+                author = #{author,jdbcType=VARCHAR},
+            </if>
+            <if test="clickHit != null">
+                clickHit = #{clickHit,jdbcType=INTEGER},
+            </if>
+            <if test="replyHit != null">
+                replyHit = #{replyHit,jdbcType=INTEGER},
+            </if>
+            <if test="content != null">
+                content = #{content,jdbcType=VARCHAR},
+            </if>
+            <if test="keyWord != null">
+                keyWord = #{keyWord,jdbcType=VARCHAR},
+            </if>
+            <if test="typeId != null">
+                typeId = #{typeId,jdbcType=INTEGER},
+            </if>
+        </set>
+        where bid = #{bid,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.ch.bean.Blog">
+        update blog
+        set title = #{title,jdbcType=VARCHAR},
+        summary = #{summary,jdbcType=VARCHAR},
+        releaseDate = #{releaseDate,jdbcType=TIMESTAMP},
+        author = #{author,jdbcType=VARCHAR},
+        clickHit = #{clickHit,jdbcType=INTEGER},
+        replyHit = #{replyHit,jdbcType=INTEGER},
+        content = #{content,jdbcType=VARCHAR},
+        keyWord = #{keyword,jdbcType=VARCHAR},
+        typeId = #{typeId,jdbcType=INTEGER}
+        where bid = #{bid,jdbcType=INTEGER}
+    </update>
+
+</mapper>
